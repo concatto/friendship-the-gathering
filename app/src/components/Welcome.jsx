@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Typography, Button } from '@material-ui/core';
 import Box from './Box';
 import { withToken } from '../database';
+import Gather from './Gather';
 
 class Welcome extends Component {
   constructor(props) {
@@ -67,6 +68,8 @@ class Welcome extends Component {
         <Button variant="contained" color="primary" onClick={() => this.handleStart()}>
           Responder
         </Button>
+
+        <Gather name="Alex Luciano Roesler Rese" />
       </Box>
     );
   }

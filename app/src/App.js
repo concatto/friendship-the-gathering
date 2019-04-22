@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Welcome from './components/Welcome';
+import Gather from './components/Gather';
+import Box from './components/Box';
 
 const theme = createMuiTheme({
 
@@ -12,7 +14,10 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>
         <BrowserRouter>
-          <Route path="/welcome/:token" component={Welcome} />
+          <Box crossAlign="center" padding="8 4">
+            <Route path="/welcome/:token" component={Welcome} />
+            <Route path="/gather/:token" component={Gather} />
+          </Box>
         </BrowserRouter>
       </MuiThemeProvider>
     );

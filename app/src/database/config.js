@@ -3,6 +3,8 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
 
+// welcome/1ec2d6e1-7f1f-4f0b-81f0-09406442e85f
+
 const config = {
   apiKey: 'AIzaSyBvZYvSfaZGmIHKu-JgFHcwPscn-SYuonk',
   authDomain: 'friendship-f4cd0.firebaseapp.com',

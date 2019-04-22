@@ -10,7 +10,11 @@ const toArray = (snapshot) => {
   return docs;
 };
 
-export const withToken = (token) => {
+export const withToken = (token = '') => {
+  if (token.length === 0) {
+    throw new Error('No token set.');
+  }
+
   const persons = firebase.firestore().collection('persons');
 
   return {

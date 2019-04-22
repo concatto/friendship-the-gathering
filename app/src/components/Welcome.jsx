@@ -3,6 +3,7 @@ import { Typography, Button } from '@material-ui/core';
 import Box from './Box';
 import { withToken } from '../database';
 import Gather from './Gather';
+import { getToken } from '../utils';
 
 class Welcome extends Component {
   constructor(props) {
@@ -14,7 +15,7 @@ class Welcome extends Component {
   }
 
   componentDidMount() {
-    const db = withToken(this.getToken());
+    const db = withToken(getToken(this.props));
 
     const queries = [
       db.getSelf(),
@@ -31,15 +32,8 @@ class Welcome extends Component {
     db.getRandomSubject();
   }
 
-  getToken() {
-    const { match } = this.props;
-    const { token = '' } = match.params;
-
-    return token;
-  }
-
   handleStart() {
-    const db = withToken(this.getToken());
+    const db = withToken(getToken(this.props));
 
     db.getRandomSubject().then((subject) => {
       alert(JSON.stringify(subject));
@@ -51,7 +45,7 @@ class Welcome extends Component {
     const { self, remaining } = this.state;
 
     return (
-      <Box crossAlign="center" padding="8 4">
+      <Box>
         <Typography variant="h2">
           Friendship: The Gathering
         </Typography>
@@ -69,7 +63,7 @@ class Welcome extends Component {
           Responder
         </Button>
 
-        <Gather name="Alex Luciano Roesler Rese" />
+        {/* <Gather name="Alex Luciano Roesler Rese" /> */}
       </Box>
     );
   }

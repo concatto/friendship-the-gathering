@@ -10,7 +10,7 @@ class Question extends Component {
     } = this.props;
 
     return (
-      <Box padding="0 0 4 0" {...rest}>
+      <Box padding="0 0 6 0" {...rest}>
         <Box padding="0 0 2 0">
           <Typography variant={typography}>
             {description}

@@ -1,6 +1,7 @@
-import firebase from './config';
+import firebase from 'firebase/app';
+import app from './config';
 
-export default firebase;
+export default app;
 
 const toArray = (snapshot) => {
   const docs = [];
@@ -15,22 +16,29 @@ export const withToken = (token = '') => {
     throw new Error('No token set.');
   }
 
-  const persons = firebase.firestore().collection('persons');
+  const persons = app.firestore().collection('persons');
 
   return {
     getRemainingResponses() {
-      const memberIds = this.getSocialGroup().then(doc => (
+      const membersQuery = this.getSocialGroup().then(doc => (
         doc.data().members.map(member => member.get()) // Map members of the group to docs
       )).then(members => Promise.all(members));
 
-      const subjectIds = this.getResponses().then(responses => (
+      const subjectsQuery = this.getResponses().then(responses => (
         responses.map(r => r.subject.get()) // Map each response to the subject's doc
       )).then(subjects => Promise.all(subjects));
 
-      return Promise.all([memberIds, subjectIds]).then(([m, s]) => {
-        const ids = s.map(item => item.id);
+      const queries = [
+        membersQuery,
+        subjectsQuery,
+        this.getSelf().then(self => self.id),
+      ];
 
-        return m.filter(member => ids.includes(member.id) === false);
+      return Promise.all(queries).then(([members, subjects, selfId]) => {
+        const ids = subjects.map(item => item.id);
+        ids.push(selfId);
+
+        return members.filter(member => ids.includes(member.id) === false);
       });
     },
 
@@ -48,13 +56,32 @@ export const withToken = (token = '') => {
 
     getRandomSubject() {
       return this.getRemainingResponses().then((docs) => {
-        const index = Math.floor(Math.random() * docs.length); // Generate a random index
+        if (docs.length === 0) {
+          return null;
+        }
 
-        return docs[index]; // Retrieve the person's document directly
-      }).then(doc => ({
-        id: doc.id,
-        name: doc.data().name,
-      }));
+        const index = Math.floor(Math.random() * docs.length); // Generate a random index
+        const doc = docs[index]; // Retrieve the person's document directly
+
+        return {
+          id: doc.id,
+          name: doc.data().name,
+        };
+      });
+    },
+
+    insertResponse(subject, level, change) {
+      const data = {
+        level,
+        change,
+        subject: persons.doc(subject),
+      };
+
+      return this.getSelf().then(self => (
+        self.ref.update({
+          responses: firebase.firestore.FieldValue.arrayUnion(data),
+        })
+      ));
     },
   };
 };

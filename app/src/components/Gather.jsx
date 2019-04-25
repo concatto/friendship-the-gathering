@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import {
-  Typography, RadioGroup, CircularProgress, withWidth, Button, Link,
+  Typography, RadioGroup, CircularProgress, withWidth, Button, Link, IconButton,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import lodash from 'lodash';
 import { Redirect } from 'react-router-dom';
+import Show from '@material-ui/icons/Visibility';
+import Hide from '@material-ui/icons/VisibilityOff';
 import Box from './Box';
 import { withToken } from '../database';
 import Question from './Question';
 import Option from './Option';
-import { getToken, getGender } from '../utils';
+import { getToken, getGender, anonymize } from '../utils';
 import Avatar from './Avatar';
 import ConfirmationDialog from './ConfirmationDialog';
 import ColouredSpan from './ColouredSpan';
+import browserStore from '../browserStore';
 
 class Gather extends Component {
   constructor(props) {
@@ -30,7 +33,7 @@ class Gather extends Component {
   retrieveData() {
     const keys = Object.keys(this.state);
     const newState = lodash.zipObject(keys, keys.map(() => undefined));
-    this.setState({ ...newState, dialogOpen: false });
+    this.setState({ ...newState, dialogOpen: false, nameHidden: true });
 
     const token = getToken(this.props);
     const db = withToken(token);
@@ -52,6 +55,7 @@ class Gather extends Component {
       } else {
         this.setState({
           subject: postprocess(subject),
+          anonymousSubject: anonymize(subject.name),
           self: { ...postprocess(self.data()), id: self.id },
           remaining: remaining.length - 1,
         });
@@ -59,8 +63,10 @@ class Gather extends Component {
     });
   }
 
-  handleSubmit() {
+  handleSubmit(checked) {
     const { level, change, subject } = this.state;
+
+    browserStore.insert('doNotDisturb', checked, false);
 
     this.setState({ working: true, dialogOpen: false });
 
@@ -88,10 +94,19 @@ class Gather extends Component {
     }
   }
 
+  handleConfirm() {
+    // Check if the user does not want to see the confirmation dialog
+    if (browserStore.find('doNotDisturb') === 'true') {
+      this.handleSubmit(true);
+    } else {
+      this.setState({ dialogOpen: true });
+    }
+  }
+
   render() {
     const { width } = this.props;
     const {
-      subject, self, change, level, finished, working, dialogOpen,
+      subject, anonymousSubject, self, change, level, finished, working, dialogOpen, nameHidden,
     } = this.state;
 
     if (!subject) {
@@ -106,18 +121,26 @@ class Gather extends Component {
       );
     }
 
+    const Icon = nameHidden ? Show : Hide;
+    const displayName = nameHidden ? anonymousSubject : subject.name;
+
     return (
       <Box>
         <Box padding={width === 'xs' ? '1 0' : '4 0'}>
           <Box padding="0 0 4" crossAlign="center">
             <Avatar name={subject.name} gender={subject.isMale ? 'M' : 'F'} width={100} />
-            <Box padding="2" />
+
+            <Box padding="2 0">
+              <IconButton onClick={() => this.setState({ nameHidden: !nameHidden })}>
+                <Icon fontSize="large" />
+              </IconButton>
+            </Box>
             <Typography variant={width === 'xs' ? 'h4' : 'h2'} align="center">
-              {subject.name}
+              {displayName}
             </Typography>
           </Box>
         </Box>
-        <Question description={<span>1. Qual o seu nível de amizade com <ColouredSpan colour="secondary">{subject.name.split(' ')[0]}</ColouredSpan>?</span>}>
+        <Question description={<span>1. Qual o seu nível de amizade com <ColouredSpan colour="secondary">{displayName.split(' ')[0]}</ColouredSpan>?</span>}>
           <RadioGroup value={level} onChange={e => this.setState({ level: e.target.value })}>
             <Option value="0" label="0 - Não conheço." />
             <Option value="1" label="1 - Sei quem é, mas não conversamos." />
@@ -126,7 +149,7 @@ class Gather extends Component {
             <Option value="4" label={`4 - ${subject.isMale ? 'Melhor amigo' : 'Melhor amiga'}, conversamos quase todo dia!`} />
           </RadioGroup>
         </Question>
-        <Question description="2. No último ano, houve mudança no nível de amizade entre vocês?">
+        <Question description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">
           <RadioGroup value={change} onChange={e => this.setState({ change: e.target.value })}>
             <Option value="decreased" label="Diminuiu. Ficamos mais distantes." />
             <Option value="stable" label="Manteve-se igual." />
@@ -134,11 +157,11 @@ class Gather extends Component {
           </RadioGroup>
         </Question>
 
-        <Box crossAlign="center" padding="4 0" position="relative">
+        <Box crossAlign="center" padding="2 0 3" position="relative">
           <Button
             variant="contained"
             color="primary"
-            onClick={() => this.setState({ dialogOpen: true })}
+            onClick={() => this.handleConfirm()}
             size="large"
             disabled={level === undefined || change === undefined || working}
           >
@@ -165,7 +188,7 @@ class Gather extends Component {
 
         <ConfirmationDialog
           open={dialogOpen}
-          onConfirm={() => this.handleSubmit()}
+          onConfirm={checked => this.handleSubmit(checked)}
           onClose={() => this.setState({ dialogOpen: false })}
         />
       </Box>

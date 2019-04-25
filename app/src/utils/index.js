@@ -1,5 +1,6 @@
 import lodash from 'lodash';
 import stringSimilarity from 'string-similarity';
+import randomString from 'randomstring';
 import names from './nomes_redux.json';
 
 export const traverse = (item, leafMapper) => {
@@ -46,3 +47,9 @@ export const getGender = (name) => {
   console.log('Match for ', upperName, ' => ', bestMatch, 'with s = ', maxSimilarity);
   return bestMatch.classification;
 };
+
+export const anonymize = name => (
+  name.split(' ')
+    .map(piece => randomString.generate(piece.length))
+    .join(' ')
+);

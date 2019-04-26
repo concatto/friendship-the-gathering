@@ -83,7 +83,7 @@ class Welcome extends Component {
               <Paragraph>
                 <span>Sabemos que perguntas desta natureza são bastante sensíveis e </span>
                 <span>entendemos que elas podem lhe causar algum desconforto. <ColouredSpan colour="secondary">Sinta-se livre</ColouredSpan> </span>
-                <span>para não responder o questionário se você não se sentir confortável.</span>
+                <span>para não responder o questionário caso não se sentir confortável.</span>
               </Paragraph>
               <Paragraph>
                 <span>Preocupamo-nos muito com o sigilo de suas informações e tomamos o </span>

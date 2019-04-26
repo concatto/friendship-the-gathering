@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Typography, RadioGroup, CircularProgress, withWidth, Button, Link, IconButton,
+  Typography, RadioGroup, CircularProgress, withWidth, Button, Link, IconButton, Grid,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import lodash from 'lodash';
@@ -125,72 +125,83 @@ class Gather extends Component {
     const displayName = nameHidden ? anonymousSubject : subject.name;
 
     return (
-      <Box>
-        <Box padding={width === 'xs' ? '1 0' : '4 0'}>
-          <Box padding="0 0 4" crossAlign="center">
-            <Avatar name={subject.name} gender={subject.isMale ? 'M' : 'F'} width={100} />
+      <Box flex="grow" width="100%">
+        <Grid container justify="center">
+          <Grid item xs={12} sm={5}>
 
-            <Box padding="2 0">
-              <IconButton onClick={() => this.setState({ nameHidden: !nameHidden })}>
-                <Icon fontSize="large" />
-              </IconButton>
+            <Box padding={width === 'xs' ? '1 0' : '4 0'}>
+              <Box padding="0 0 4" crossAlign="center">
+                <Avatar name={subject.name} gender={subject.isMale ? 'M' : 'F'} width={100} />
+
+                <Box padding="2 0">
+                  <IconButton onClick={() => this.setState({ nameHidden: !nameHidden })}>
+                    <Icon fontSize="large" />
+                  </IconButton>
+                </Box>
+                <Box>
+                  <Typography variant={width === 'xs' ? 'h4' : 'h2'} align="center">
+                    {displayName}
+                  </Typography>
+                </Box>
+
+              </Box>
             </Box>
-            <Typography variant={width === 'xs' ? 'h4' : 'h2'} align="center">
-              {displayName}
-            </Typography>
-          </Box>
-        </Box>
-        <Question description={<span>1. Qual o seu nível de amizade com <ColouredSpan colour="secondary">{displayName.split(' ')[0]}</ColouredSpan>?</span>}>
-          <RadioGroup value={level} onChange={e => this.setState({ level: e.target.value })}>
-            <Option value="0" label="0 - Não conheço." />
-            <Option value="1" label="1 - Sei quem é, mas não conversamos." />
-            <Option value="2" label="2 - Conversamos de vez em quando." />
-            <Option value="3" label={`3 - ${subject.isMale ? 'Amigo próximo' : 'Amiga próxima'}, conversamos com certa frequência.`} />
-            <Option value="4" label={`4 - ${subject.isMale ? 'Melhor amigo' : 'Melhor amiga'}, conversamos quase todo dia!`} />
-          </RadioGroup>
-        </Question>
-        <Question description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">
-          <RadioGroup value={change} onChange={e => this.setState({ change: e.target.value })}>
-            <Option value="decreased" label="Diminuiu. Ficamos mais distantes." />
-            <Option value="stable" label="Manteve-se igual." />
-            <Option value="increased" label={`Aumentou. Ficamos mais ${subject.isMale || self.isMale ? 'próximos' : 'próximas'}.`} />
-          </RadioGroup>
-        </Question>
+            <Question description={<span>1. Qual o seu nível de amizade com <ColouredSpan colour="secondary">{displayName.split(' ')[0]}</ColouredSpan>?</span>}>
+              <RadioGroup value={level} onChange={e => this.setState({ level: e.target.value })}>
+                <Option value="0" label="0 - Não conheço." />
+                <Option value="1" label="1 - Sei quem é, mas não conversamos." />
+                <Option value="2" label="2 - Conversamos de vez em quando." />
+                <Option value="3" label={`3 - ${subject.isMale ? 'Amigo próximo' : 'Amiga próxima'}, conversamos com certa frequência.`} />
+                <Option value="4" label={`4 - ${subject.isMale ? 'Melhor amigo' : 'Melhor amiga'}, conversamos quase todo dia!`} />
+              </RadioGroup>
+            </Question>
+            <Question description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">
+              <RadioGroup value={change} onChange={e => this.setState({ change: e.target.value })}>
+                <Option value="decreased" label="Diminuiu. Ficamos mais distantes." />
+                <Option value="stable" label="Manteve-se igual." />
+                <Option value="increased" label={`Aumentou. Ficamos mais ${subject.isMale || self.isMale ? 'próximos' : 'próximas'}.`} />
+              </RadioGroup>
+            </Question>
 
-        <Box crossAlign="center" padding="2 0 3" position="relative">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.handleConfirm()}
-            size="large"
-            disabled={level === undefined || change === undefined || working}
-          >
-            Confirmar
-          </Button>
+            <Box crossAlign="center" padding="2 0 3">
+              <Box position="relative">
 
-          {working && (
-            <CircularProgress style={{ position: 'absolute', marginLeft: 120 }} />
-          )}
-        </Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => this.handleConfirm()}
+                  size="large"
+                  disabled={level === undefined || change === undefined || working}
+                >
+                  Confirmar
+                </Button>
 
-        <Box padding="6 0 0">
-          <Typography align="center">
-            {this.createRemainingMessage()}
-          </Typography>
-          <Typography align="center" gutterBottom>
+                {working && (
+                  <CircularProgress style={{ position: 'absolute', right: -60 }} />
+                )}
+              </Box>
+            </Box>
+
+            <Box padding="6 0 0">
+              <Typography align="center">
+                {this.createRemainingMessage()}
+              </Typography>
+              <Typography align="center" gutterBottom>
             Respondendo como: <strong>{self.name}</strong>.
-          </Typography>
-          <Typography align="center">
-            <span>Ícones produzidos por <Link href="https://www.freepik.com/" title="Freepik">Freepik</Link> </span>
-            <span>e disponibilizados por <Link href="https://www.flaticon.com/" title="Flaticon">flaticon</Link></span>
-          </Typography>
-        </Box>
+              </Typography>
+              <Typography align="center">
+                <span>Ícones produzidos por <Link href="https://www.freepik.com/" title="Freepik">Freepik</Link> </span>
+                <span>e disponibilizados por <Link href="https://www.flaticon.com/" title="Flaticon">flaticon</Link></span>
+              </Typography>
+            </Box>
 
-        <ConfirmationDialog
-          open={dialogOpen}
-          onConfirm={checked => this.handleSubmit(checked)}
-          onClose={() => this.setState({ dialogOpen: false })}
-        />
+            <ConfirmationDialog
+              open={dialogOpen}
+              onConfirm={checked => this.handleSubmit(checked)}
+              onClose={() => this.setState({ dialogOpen: false })}
+            />
+          </Grid>
+        </Grid>
       </Box>
     );
   }

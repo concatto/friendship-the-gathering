@@ -85,7 +85,7 @@ class Gather extends Component {
         );
       case 1:
         return (
-          <span>Além desta, resta apenas<strong>uma</strong> pessoa a ser avaliada.</span>
+          <span>Além desta, resta apenas <strong>uma</strong> pessoa a ser avaliada.</span>
         );
       default:
         return (

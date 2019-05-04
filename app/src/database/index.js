@@ -1,5 +1,7 @@
 import firebase from 'firebase/app';
+import uuidv4 from 'uuid/v4';
 import app from './config';
+import { composeEmail } from '../utils';
 
 export default app;
 
@@ -10,6 +12,70 @@ const toArray = (snapshot) => {
 
   return docs;
 };
+
+export const gatherResults = (socialGroup) => {
+  // EmQaRX3WT8nRvmfuKs0M
+
+  // Transform the subject field of each response to the document's ID
+  const populateResponses = responses => (
+    responses.map(response => (
+      { ...response, subject: response.subject.id }
+    ))
+  );
+
+  app.firestore().collection('socialGroups').doc(socialGroup).get()
+    .then(doc => doc.data().members.map(member => member.get()))
+    .then(promises => Promise.all(promises))
+    .then(members => (
+      members.map(doc => ({ id: doc.id, responses: populateResponses(doc.data().responses) }))
+    ))
+    .then((groupData) => {
+      const rows = [
+        ['from', 'to', 'level', 'change'],
+      ];
+
+      groupData.forEach((member) => {
+        member.responses.forEach((response) => {
+          rows.push([member.id, response.subject, response.level, response.change]);
+        });
+      });
+
+      const text = rows.map(row => row.join(',')).join('\n');
+      console.log(text);
+    });
+};
+
+export const registerPerson = (name, email, socialGroup) => {
+  const persons = app.firestore().collection('persons');
+  const groups = app.firestore().collection('socialGroups');
+  const socialGroupDoc = groups.doc(socialGroup.id);
+
+  return persons.add({
+    name,
+    email,
+    socialGroup: socialGroupDoc,
+    responses: [],
+    token: uuidv4(),
+  }).then((doc) => {
+    console.log('Added: ', doc.id);
+    return socialGroupDoc.update({
+      members: firebase.firestore.FieldValue.arrayUnion(persons.doc(doc.id)),
+    });
+  });
+};
+
+export const generateEmailsForGroup = (socialGroup) => {
+  const promises = socialGroup.data().members.map(x => x.get());
+  const groupName = socialGroup.data().name;
+
+  Promise.all(promises)
+    .then(members => toArray(members))
+    .then(members => members.map(member => composeEmail(member.data(), groupName)))
+    .then(emails => console.log(JSON.stringify(emails, '', 4)));
+};
+
+
+export const getSocialGroups = () => app.firestore().collection('socialGroups').get().then(data => toArray(data));
 
 export const withToken = (token = '') => {
   if (token.length === 0) {

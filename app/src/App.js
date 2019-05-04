@@ -8,6 +8,8 @@ import Gather from './components/Gather';
 import Box from './components/Box';
 import Finished from './components/Finished';
 import ResearchInfo from './components/ResearchInfo';
+import Retrieve from './components/Retrieve';
+import Admin from './components/Admin';
 
 const theme = createMuiTheme({
   palette: {
@@ -26,6 +28,8 @@ class App extends Component {
             <Route path="/gather/:token" component={Gather} />
             <Route path="/finished" component={Finished} />
             <Route path="/info" component={ResearchInfo} />
+            <Route path="/retrieve/:id" component={Retrieve} />
+            <Route path="/admin" component={Admin} />
           </Box>
         </BrowserRouter>
       </MuiThemeProvider>

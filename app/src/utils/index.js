@@ -53,3 +53,19 @@ export const anonymize = name => (
     .map(piece => randomString.generate(piece.length))
     .join(' ')
 );
+
+export const composeEmail = (memberData, groupName) => ({
+  subject: `Experimento: ${groupName}`,
+  to: memberData.email,
+  content: `
+Olá ${memberData.name}! Aqui é o Fernando.
+
+Gostaria de te convidar para participar de um experimento que servirá para validar o instrumento de pesquisa referente ao meu TTC, intitulado "Investigação Quantitativa Quanto ao Papel de Círculos Sociais no Desempenho Discente no Ensino Superior", que está sendo orientado pelo Alex Rese. Nele, você responderá algumas perguntas que habilitarão a modelagem dos círculos sociais do grupo ${groupName} como uma Rede Complexa, permitindo análises mais profundas.
+
+A natureza das perguntas é bastante sensível, portanto tomamos alguns cuidados para tratar dos dados. Após a conclusão do experimento, informações que identificariam você e seus colegas serão eliminadas da base de dados, sendo convertidas para códigos alfanuméricos.
+
+Aqui está o link para responder o instrumento de pesquisa. Ele é único para você, então cuide bem dele.
+http://lia-relay.ddns.net:3001/welcome/${memberData.token}
+
+Obrigado pela atenção!`,
+});

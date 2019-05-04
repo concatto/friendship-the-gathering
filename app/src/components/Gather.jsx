@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Typography, RadioGroup, CircularProgress, withWidth, Button, Link, IconButton, Grid,
+  Typography, RadioGroup, CircularProgress, withWidth, Button, Link, IconButton, Grid, Tooltip,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import lodash from 'lodash';
 import { Redirect } from 'react-router-dom';
-import Show from '@material-ui/icons/Visibility';
-import Hide from '@material-ui/icons/VisibilityOff';
+import Hide from '@material-ui/icons/Visibility';
+import Show from '@material-ui/icons/VisibilityOff';
 import Box from './Box';
 import { withToken } from '../database';
 import Question from './Question';
@@ -150,9 +150,10 @@ class Gather extends Component {
               <RadioGroup value={level} onChange={e => this.setState({ level: e.target.value })}>
                 <Option value="0" label="0 - Não conheço." />
                 <Option value="1" label="1 - Sei quem é, mas não conversamos." />
-                <Option value="2" label="2 - Conversamos de vez em quando." />
-                <Option value="3" label={`3 - ${subject.isMale ? 'Amigo próximo' : 'Amiga próxima'}, conversamos com certa frequência.`} />
-                <Option value="4" label={`4 - ${subject.isMale ? 'Melhor amigo' : 'Melhor amiga'}, conversamos quase todo dia!`} />
+                <Option value="2" label={`2 - ${subject.isMale ? 'Conhecido' : 'Conhecida'}; conversamos de vez em quando.`} />
+                <Option value="3" label={`3 - ${subject.isMale ? 'Amigo' : 'Amiga'}. Nos damos bem.`} />
+                <Option value="4" label={`4 - ${subject.isMale ? 'Amigo próximo' : 'Amiga próxima'}, conversamos com frequência!`} />
+                <Option value="5" label={`5 - ${subject.isMale ? 'Melhor amigo' : 'Melhor amiga'}, conversamos quase todo dia!`} />
               </RadioGroup>
             </Question>
             <Question description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">

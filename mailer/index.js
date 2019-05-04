@@ -14,7 +14,7 @@ let data = JSON.parse(fs.readFileSync("./caelondia.json"));
 const promises = data.map(item => {
     const mailOptions = {
         from: 'fernandoconcatto@gmail.com',
-        to: 'fernandoconcatto@gmail.com',
+        to: item.to,
         subject: item.subject,
         html: item.content
     };

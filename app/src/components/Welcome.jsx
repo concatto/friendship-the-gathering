@@ -121,6 +121,9 @@ class Welcome extends Component {
 
               <Box padding="0 0 6" crossAlign="center">
                 <Box padding={width === 'xs' ? '0' : '0 8'}>
+                  <Typography variant="h5" color="primary" style={{ marginBottom: 24 }}>
+                    Consentimento de participação
+                  </Typography>
                   <Box direction="row" crossAlign="flex-start">
 
                     <Checkbox

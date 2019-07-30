@@ -149,5 +149,13 @@ export const withToken = (token = '') => {
         })
       ));
     },
+
+    resetResponses() {
+      return this.getSelf().then(self => (
+        self.ref.update({
+          responses: [],
+        })
+      ));
+    },
   };
 };

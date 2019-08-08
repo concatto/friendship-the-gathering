@@ -54,7 +54,7 @@ class Welcome extends Component {
     const token = getToken(this.props);
 
     const { history } = this.props;
-    history.push(`/gather/${token}`);
+    history.push(`/record/${token}`);
   }
 
   handleChange(name) {

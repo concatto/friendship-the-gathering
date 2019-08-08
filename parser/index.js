@@ -27,7 +27,6 @@ parser.on("pdfParser_dataReady", pdfData => {
 
 // parser.loadPDF('./fake_grades.pdf');
 
-
 app.post('/validate', upload.single('record'), (req, res) => {
   console.log(req.file);
   res.status(200);

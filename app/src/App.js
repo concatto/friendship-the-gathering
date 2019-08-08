@@ -10,6 +10,7 @@ import Finished from './components/Finished';
 import ResearchInfo from './components/ResearchInfo';
 import Retrieve from './components/Retrieve';
 import Admin from './components/Admin';
+import AcademicRecord from './components/AcademicRecord';
 
 const theme = createMuiTheme({
   palette: {
@@ -26,6 +27,7 @@ class App extends Component {
           <Box crossAlign="center" padding="8 4">
             <Route path="/welcome/:token" component={Welcome} />
             <Route path="/gather/:token" component={Gather} />
+            <Route path="/record/:token" component={AcademicRecord} />
             <Route path="/finished" component={Finished} />
             <Route path="/info" component={ResearchInfo} />
             <Route path="/retrieve/:id" component={Retrieve} />

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Typography, Button, CircularProgress } from '@material-ui/core';
+import axios from 'axios';
 import Box from './Box';
-import { withToken } from '../database';
+import firebase, { withToken } from '../database';
+import { getToken } from '../utils';
 
-function FileInput({ onRead }) {
+function FileInput({ onRead, ...rest }) {
   const inputRef = React.useRef(null);
 
   function handleChange() {
@@ -22,9 +24,10 @@ function FileInput({ onRead }) {
         // };
 
         // reader.readAsDataURL(files[i]);
-        console.log(files[i]);
-        formData.append('test', files[i]);
-        onRead(formData);
+        // console.log(files[i]);
+
+        formData.append('record', files[i]);
+        onRead(files[i], formData);
       }
     }
   }
@@ -45,6 +48,7 @@ function FileInput({ onRead }) {
         variant="outlined"
         size="large"
         onClick={() => inputRef.current.click()}
+        {...rest}
       >
         Selecionar arquivo
       </Button>
@@ -61,31 +65,69 @@ class AcademicRecord extends React.Component {
     };
   }
 
+  componentDidMount() {
+    withToken(getToken(this.props)).hasAcceptedTerms().then(console.log);
+  }
 
-  handleReset() {
-    const { history } = this.props;
-    const token = '51072caf-4247-43af-8667-d8c382891e71';
+  finishValidation() {
+    this.setState({ busy: false, status: '' });
 
+    console.log('Probably redirect the user ahead by now');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  validate(file, formData) {
     this.setState({ busy: true });
-    withToken(token).resetResponses().then(() => {
-      this.setState({ busy: false });
+    const token = getToken(this.props);
 
-      history.push(`/welcome/${token}`);
+    axios.post('http://localhost:4000/validate', formData).then(({ data }) => {
+      this.setState({ status: 'Validando' });
+
+      if (data === true) {
+        console.log('Ok, store it and go ahead.');
+        const storageRef = firebase.storage().ref();
+
+        this.setState({ status: 'Armazenando' });
+        return storageRef.child(token).put(file);
+      }
+
+      console.log('Invalid!!!');
+      this.setState({ busy: false, status: '' });
+      return Promise.reject();
+    }).then(snapshot => (
+      snapshot.ref.getDownloadURL()
+    )).then((url) => {
+      withToken(token).setRecordUrl(url).then(() => this.finishValidation());
     });
   }
 
   render() {
-    const { busy } = this.state;
+    const { busy, status } = this.state;
 
     return (
       <Box padding="4 0" crossAlign="center">
         <Typography variant="h4" align="center">
-          Por favor, forneça seu Histórico Escolar para prosseguir
+          Por favor, forneça seu Histórico Escolar para prosseguir.
         </Typography>
 
         <Box padding="4">
-          <FileInput onRead={console.log} />
+          <FileInput
+            disabled={busy}
+            onRead={(...args) => this.validate(...args)}
+          />
         </Box>
+
+        {busy && (
+          <Box padding="2" crossAlign="center">
+            <CircularProgress color="primary" size={60} />
+
+            <Box padding="2 0" />
+
+            <Typography>
+              {status}...
+            </Typography>
+          </Box>
+        )}
 
         {/*
           TODO instruções sobre como obter o histórico escolar

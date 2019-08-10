@@ -112,6 +112,30 @@ export const withToken = (token = '') => {
       return persons.where('token', '==', token).limit(1).get().then(snapshot => toArray(snapshot)[0]);
     },
 
+    acceptTerms() {
+      return this.getSelf().then(self => (
+        self.ref.update({
+          acceptedTerms: true,
+        })
+      ));
+    },
+
+    setRecordUrl(downloadUrl) {
+      return this.getSelf().then(self => (
+        self.ref.update({
+          recordUrl: downloadUrl,
+        })
+      ));
+    },
+
+    hasAcceptedTerms() {
+      return this.getSelf().then(self => self.data().acceptedTerms !== undefined);
+    },
+
+    hasUploadedRecord() {
+      return this.getSelf().then(self => self.data().recordUrl !== undefined);
+    },
+
     getResponses() {
       return this.getSelf().then(self => self.data().responses);
     },

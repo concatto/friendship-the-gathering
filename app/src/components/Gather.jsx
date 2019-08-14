@@ -16,6 +16,7 @@ import Avatar from './Avatar';
 import ConfirmationDialog from './ConfirmationDialog';
 import ColouredSpan from './ColouredSpan';
 import browserStore from '../browserStore';
+import RequestButton from './RequestButton';
 
 class Gather extends Component {
   constructor(props) {
@@ -164,24 +165,16 @@ class Gather extends Component {
               </RadioGroup>
             </Question>
 
-            <Box crossAlign="center" padding="2 0 3">
-              <Box position="relative">
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => this.handleConfirm()}
-                  size="large"
-                  disabled={level === undefined || change === undefined || working}
-                >
-                  Confirmar
-                </Button>
+            <RequestButton
+              padding="2 0 3"
+              onClick={() => this.handleConfirm()}
+              disabled={level === undefined || change === undefined}
+              busy={working}
+            >
+              Confirmar
+            </RequestButton>
 
-                {working && (
-                  <CircularProgress style={{ position: 'absolute', right: -60 }} />
-                )}
-              </Box>
-            </Box>
 
             <Box padding="6 0 0">
               <Typography align="center">

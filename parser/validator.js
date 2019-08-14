@@ -26,6 +26,10 @@ function parseAndValidate(buffer) {
       resolve(validate(JSON.stringify(pdfData)));
     });
     
+    parser.on("pdfParser_dataError", err => {
+      reject(err);
+    })
+
     parser.parseBuffer(buffer);
   });
 }

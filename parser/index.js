@@ -15,6 +15,10 @@ app.post('/validate', upload.single('record'), (req, res) => {
     } else {
       res.status(200).end('false');
     }
+  }).catch(err => {
+    console.log("Could not parse the file that was received. Exception:");
+    console.log(err);
+    res.status(200).end('false');
   });
 })
 

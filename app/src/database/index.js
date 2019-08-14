@@ -112,10 +112,12 @@ export const withToken = (token = '') => {
       return persons.where('token', '==', token).limit(1).get().then(snapshot => toArray(snapshot)[0]);
     },
 
-    acceptTerms() {
+    acceptTerms(name, phone) {
       return this.getSelf().then(self => (
         self.ref.update({
           acceptedTerms: true,
+          contactName: name,
+          phone,
         })
       ));
     },

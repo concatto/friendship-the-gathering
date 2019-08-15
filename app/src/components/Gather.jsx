@@ -17,6 +17,7 @@ import ConfirmationDialog from './ConfirmationDialog';
 import ColouredSpan from './ColouredSpan';
 import browserStore from '../browserStore';
 import RequestButton from './RequestButton';
+import TutorialTooltip from './TutorialTooltip';
 
 class Gather extends Component {
   constructor(props) {
@@ -124,6 +125,7 @@ class Gather extends Component {
 
     const Icon = nameHidden ? Show : Hide;
     const displayName = nameHidden ? anonymousSubject : subject.name;
+    const mobile = width === 'xs';
 
     return (
       <Box flex="grow" width="100%">
@@ -135,12 +137,16 @@ class Gather extends Component {
                 <Avatar name={subject.name} gender={subject.isMale ? 'M' : 'F'} width={100} />
 
                 <Box padding="2 0">
-                  <IconButton onClick={() => this.setState({ nameHidden: !nameHidden })}>
-                    <Icon fontSize="large" />
-                  </IconButton>
+                  {/* <Tooltip title="Revelar nome" placement="right"> */}
+                  <TutorialTooltip content={`Para revelar o nome do seu colega, ${mobile ? 'toque' : 'clique'} neste botão.`}>
+                    <IconButton onClick={() => this.setState({ nameHidden: !nameHidden })}>
+                      <Icon fontSize="large" />
+                    </IconButton>
+                  </TutorialTooltip>
+                  {/* </Tooltip> */}
                 </Box>
                 <Box>
-                  <Typography variant={width === 'xs' ? 'h4' : 'h2'} align="center">
+                  <Typography variant={mobile ? 'h4' : 'h2'} align="center">
                     {displayName}
                   </Typography>
                 </Box>
@@ -168,6 +174,8 @@ class Gather extends Component {
 
             <RequestButton
               padding="2 0 3"
+              variant="contained"
+              color="primary"
               onClick={() => this.handleConfirm()}
               disabled={level === undefined || change === undefined}
               busy={working}
@@ -181,7 +189,7 @@ class Gather extends Component {
                 {this.createRemainingMessage()}
               </Typography>
               <Typography align="center" gutterBottom>
-            Respondendo como: <strong>{self.name}</strong>.
+                Respondendo como: <strong>{self.name}</strong>.
               </Typography>
               <Typography align="center">
                 <span>Ícones produzidos por <Link href="https://www.freepik.com/" title="Freepik">Freepik</Link> </span>

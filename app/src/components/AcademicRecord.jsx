@@ -49,7 +49,11 @@ class AcademicRecord extends React.Component {
   finishValidation() {
     this.setState({ busy: false });
 
-    alert('Probably redirect the user ahead by now');
+    alert('Muito obrigado! Seu histórico foi armazenado em segurança.');
+
+    const { history } = this.props;
+    const token = getToken(this.props);
+    history.push(`/gather/${token}`);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -126,7 +130,7 @@ class AcademicRecord extends React.Component {
                 </Paragraph>
                 <TutorialImage src={portal} />
                 <Paragraph>
-                  3. Acesse a opção <ColouredSpan colour="secondary"><q>Meu histórico</q></ColouredSpan>, localizada no menu lateral sob a seção <ColouredSpan colour="secondary"><q>Integralização</q></ColouredSpan>.
+                  3. No menu lateral, sob a seção <ColouredSpan colour="secondary"><q>Integralização</q></ColouredSpan>, acesse a opção <ColouredSpan colour="secondary"><q>Meu histórico</q></ColouredSpan>.
                 </Paragraph>
                 <TutorialImage src={record} />
                 <Paragraph>

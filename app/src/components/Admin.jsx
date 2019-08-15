@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  TextField, MenuItem, FormControl, InputLabel, Select, Button, Typography,
+  TextField, MenuItem, FormControl, InputLabel, Select, Button, Typography, FormControlLabel, Checkbox,
 } from '@material-ui/core';
 import { getSocialGroups, registerPerson, generateEmailsForGroup } from '../database';
 import Box from './Box';
@@ -10,6 +10,7 @@ class Admin extends Component {
     super(props);
 
     this.state = {
+      multiple: false,
       groupEmail: 0,
       groups: [],
       values: {
@@ -27,13 +28,33 @@ class Admin extends Component {
     this.setState({ values: { ...values, [field]: value } });
   }
 
+  batchRegister(rows) {
+    const { values, groups } = this.state;
+    const { socialGroup } = values;
+
+    return rows.reduce((p, [name, email]) => (
+      p.then(() => registerPerson(name, email, groups[socialGroup]).then(console.log(name, email)))
+    ), Promise.resolve());
+  }
+
   submit(event) {
     event.preventDefault();
 
-    const { values, groups } = this.state;
-    const { name, email, socialGroup } = values;
+    const { values, groups, multiple } = this.state;
+    const {
+      name, email, socialGroup, batch,
+    } = values;
 
-    registerPerson(name, email, groups[socialGroup]).then(console.log);
+    if (multiple) {
+      const rows = batch
+        .split('\n')
+        .filter(row => row.length > 0)
+        .map(row => row.split(','));
+
+      this.batchRegister(rows).then(() => alert('Done'));
+    } else {
+      registerPerson(name, email, groups[socialGroup]).then(console.log);
+    }
   }
 
   generateEmails() {
@@ -43,7 +64,9 @@ class Admin extends Component {
   }
 
   render() {
-    const { values, groups, groupEmail } = this.state;
+    const {
+      values, groups, groupEmail, multiple,
+    } = this.state;
 
     const options = groups.map((group, i) => (
       <MenuItem value={i} key={group.id}>{group.data().name}</MenuItem>
@@ -55,22 +78,44 @@ class Admin extends Component {
           <form onSubmit={e => this.submit(e)}>
 
             <Box direction="column">
-              <TextField
-                value={values.name || ''}
-                onChange={e => this.setValue('name', e.target.value)}
-                label="Nome"
-                id="name"
+              <FormControlLabel
+                control={(
+                  <Checkbox
+                    checked={multiple}
+                    onChange={e => this.setState({ multiple: e.target.checked })}
+                  />
+                )}
+                label="Em lote"
               />
 
-              <Box padding="1 0" />
+              {multiple ? (
+                <TextField
+                  label="Dados em lote"
+                  multiline
+                  rows="8"
+                  value={values.batch}
+                  onChange={e => this.setValue('batch', e.target.value)}
+                />
+              ) : (
+                <>
+                  <TextField
+                    value={values.name || ''}
+                    onChange={e => this.setValue('name', e.target.value)}
+                    label="Nome"
+                    id="name"
+                  />
 
-              <TextField
-                value={values.email || ''}
-                onChange={e => this.setValue('email', e.target.value)}
-                label="E-mail"
-                type="email"
-                id="email"
-              />
+                  <Box padding="1 0" />
+
+                  <TextField
+                    value={values.email || ''}
+                    onChange={e => this.setValue('email', e.target.value)}
+                    label="E-mail"
+                    type="email"
+                    id="email"
+                  />
+                </>
+              )}
 
               <Box padding="2 0" />
 

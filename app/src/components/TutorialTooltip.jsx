@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Tooltip, Typography, Button, Paper, withStyles,
+  Tooltip, Typography, Button, withStyles,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import Box from './Box';
@@ -8,11 +8,11 @@ import Box from './Box';
 const tutorialTooltipKey = 'tutorialTooltipHidden';
 
 export const hideTutorialTooltip = () => {
-  window.localStorage.setItem(tutorialTooltipKey, true);
+  window.sessionStorage.setItem(tutorialTooltipKey, true);
 };
 
 export const isTutorialTooltipHidden = () => (
-  window.localStorage.getItem(tutorialTooltipKey) === 'true'
+  window.sessionStorage.getItem(tutorialTooltipKey) === 'true'
 );
 
 const BaseTooltip = withStyles(() => ({

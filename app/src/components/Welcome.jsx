@@ -10,9 +10,7 @@ import { getToken } from '../utils';
 import ColouredSpan from './ColouredSpan';
 import RequestButton from './RequestButton';
 import Paragraph from './Paragraph';
-// import tcle from '../res/tcle.pdf';
-
-const tcle = 'https://concatto-ttc.s3-sa-east-1.amazonaws.com/tcle_meta.pdf';
+import Consent from './Consent';
 
 class Welcome extends Component {
   constructor(props) {
@@ -85,16 +83,17 @@ class Welcome extends Component {
       );
     }
 
+    const mobile = width === 'xs';
     // const InfoLink = props => <RouterLink to="/info" {...props} />;
 
     return (
       <Box crossAlign="center">
         <Box crossAlign="center">
 
-          <Typography variant="h2" align="center" gutterBottom>
+          <Typography variant={mobile ? 'h3' : 'h2'} align="center" gutterBottom>
             Instrumento de Pesquisa:
           </Typography>
-          <Typography variant="h4" align="center">
+          <Typography variant={mobile ? 'h5' : 'h4'} align="center">
             Proximidade Social no Ensino Superior
           </Typography>
         </Box>
@@ -129,19 +128,7 @@ class Welcome extends Component {
                         <span>com o Termo de Consentimento Livre e Esclarecido, apresentado abaixo.</span>
                       </Paragraph>
 
-                      <Box padding="2 0">
-                        <embed
-                          src={`https://drive.google.com/viewerng/viewer?embedded=true&url=${tcle}`}
-                          width="100%"
-                          height="600"
-                        />
-                      </Box>
-
-                      <Box crossAlign="center" padding="2 0 4">
-                        <Button color="secondary" variant="outlined" component="a" href={tcle} target="_blank">
-                          Baixar via
-                        </Button>
-                      </Box>
+                      <Consent />
 
                       <Box padding="0 0 6" crossAlign="center">
                         <Box padding={width === 'xs' ? '0' : '0 8'}>

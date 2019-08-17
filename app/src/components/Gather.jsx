@@ -24,7 +24,6 @@ class Gather extends Component {
     super(props);
 
     this.state = {
-
     };
   }
 
@@ -40,6 +39,16 @@ class Gather extends Component {
         history.push(`/welcome/${token}`);
       }
     });
+  }
+
+  getSecondQuestionValue() {
+    const { level, change } = this.state;
+
+    if (level === '0') {
+      return 'stable';
+    }
+
+    return change || '';
   }
 
   retrieveData() {
@@ -76,13 +85,13 @@ class Gather extends Component {
   }
 
   handleSubmit(checked) {
-    const { level, change, subject } = this.state;
+    const { level, subject } = this.state;
 
     browserStore.insert('doNotDisturb', checked, false);
 
     this.setState({ working: true, dialogOpen: false });
 
-    withToken(getToken(this.props)).insertResponse(subject.id, level, change).then(() => {
+    withToken(getToken(this.props)).insertResponse(subject.id, level, this.getSecondQuestionValue()).then(() => {
       this.retrieveData();
     });
   }
@@ -135,8 +144,10 @@ class Gather extends Component {
   render() {
     const { width } = this.props;
     const {
-      subject, anonymousSubject, self, change, level, finished, working, dialogOpen, nameHidden,
+      subject, anonymousSubject, self, level, finished, working, dialogOpen, nameHidden,
     } = this.state;
+
+    const change = this.getSecondQuestionValue();
 
     if (!subject) {
       return (
@@ -149,6 +160,7 @@ class Gather extends Component {
         </Box>
       );
     }
+    console.log('Change = ', change);
 
     const Icon = nameHidden ? Show : Hide;
     const displayName = nameHidden ? anonymousSubject : subject.name;
@@ -194,9 +206,9 @@ class Gather extends Component {
             </Question>
             <Question description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">
               <RadioGroup value={change} onChange={e => this.setState({ change: e.target.value })}>
-                <Option value="decreased" label="Diminuiu. Ficamos mais distantes." />
-                <Option value="stable" label="Manteve-se igual." />
-                <Option value="increased" label={`Aumentou. Ficamos mais ${subject.isMale || self.isMale ? 'próximos' : 'próximas'}.`} />
+                <Option disabled={level === '0'} value="decreased" label="Diminuiu. Ficamos mais distantes." />
+                <Option disabled={level === '0'} value="stable" label="Manteve-se igual." />
+                <Option disabled={level === '0'} value="increased" label={`Aumentou. Ficamos mais ${subject.isMale || self.isMale ? 'próximos' : 'próximas'}.`} />
               </RadioGroup>
             </Question>
 

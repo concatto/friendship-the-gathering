@@ -71,7 +71,6 @@ class Welcome extends Component {
   }
 
   render() {
-    console.log(this.props);
     const { width } = this.props;
     const {
       self, remaining, checked, name, phone, busy,

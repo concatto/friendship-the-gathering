@@ -36,7 +36,7 @@ class Gather extends Component {
         this.retrieveData();
       } else {
         const { history } = this.props;
-        history.push(`/welcome/${token}`);
+        history.push(`/record/${token}`);
       }
     });
   }
@@ -204,7 +204,7 @@ class Gather extends Component {
                 <Option value="5" label={`5 - ${subject.isMale ? 'Melhor amigo' : 'Melhor amiga'}, conversamos quase todo dia!`} />
               </RadioGroup>
             </Question>
-            <Question description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">
+            <Question disabled={level === '0'} description="2. Nos últimos meses, houve mudança no nível de amizade entre vocês?">
               <RadioGroup value={change} onChange={e => this.setState({ change: e.target.value })}>
                 <Option disabled={level === '0'} value="decreased" label="Diminuiu. Ficamos mais distantes." />
                 <Option disabled={level === '0'} value="stable" label="Manteve-se igual." />

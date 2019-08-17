@@ -13,6 +13,9 @@ import download from '../res/tutorial/download.png';
 import FileInput from './FileInput';
 import ColouredSpan from './ColouredSpan';
 
+const validatorUrl = process.env.REACT_APP_VALIDATOR_URL || 'localhost';
+const validatorPort = process.env.REACT_APP_VALIDATOR_PORT || '4000';
+
 function TutorialImage({ src, ...rest }) {
   return (
     <Box crossAlign="center">
@@ -69,7 +72,7 @@ class AcademicRecord extends React.Component {
 
     this.setState({ status: 'Validando' });
 
-    axios.post('http://localhost:4000/validate', formData).then(({ data }) => {
+    axios.post(`http://${validatorUrl}:${validatorPort}/validate`, formData).then(({ data }) => {
       if (data === true) {
         const storageRef = firebase.storage().ref();
 
@@ -118,6 +121,11 @@ class AcademicRecord extends React.Component {
                 <span>de responder as perguntas de pesquisa estabelecidas no estudo. </span>
                 <span>Sua identidade não será revelada sob nenhuma hipótese.</span>
               </Paragraph>
+              <Paragraph>
+                <ColouredSpan colour="primary">
+                  O Histórico Escolar só pode ser obtido através da Intranet. O aplicativo Minha Univali não possui esta funcionalidade.
+                </ColouredSpan>
+              </Paragraph>
             </Box>
 
             <Divider />
@@ -129,7 +137,7 @@ class AcademicRecord extends React.Component {
 
               <Box padding="4 0 0">
                 <Paragraph>
-                  1. Faça login no <Link underline="always" target="_blank" rel="noopener" href="https://intranet.univali.br/intranet/indexMural.php">Intranet da UNIVALI.</Link>
+                  1. Faça login na <Link underline="always" target="_blank" rel="noopener" href="https://intranet.univali.br/intranet/indexMural.php">Intranet da UNIVALI.</Link>
                 </Paragraph>
                 <Paragraph>
                   2. Acesse seu curso no <ColouredSpan colour="secondary">Portal do Aluno (Acadêmico/Financeiro)</ColouredSpan>.

@@ -6,13 +6,13 @@ import Box from './Box';
 class Question extends Component {
   render() {
     const {
-      description, typography = 'h5', children, ...rest
+      description, disabled, typography = 'h5', children, ...rest
     } = this.props;
 
     return (
       <Box padding="0 0 6 0" {...rest}>
         <Box padding="0 0 2 0">
-          <Typography variant={typography}>
+          <Typography variant={typography} color={disabled ? 'textSecondary' : 'default'}>
             {description}
           </Typography>
         </Box>

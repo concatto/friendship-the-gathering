@@ -36,10 +36,16 @@ class AcademicRecord extends React.Component {
   componentDidMount() {
     const { history } = this.props;
     const token = getToken(this.props);
+    const db = withToken(token);
 
-    withToken(token).hasAcceptedTerms().then((accepted) => {
+    Promise.all([
+      db.hasAcceptedTerms(),
+      db.hasUploadedRecord(),
+    ]).then(([accepted, uploaded]) => {
       if (!accepted) {
         history.push(`/welcome/${token}`);
+      } else if (uploaded) {
+        history.push(`/gather/${token}`);
       } else {
         this.setState({ ready: true });
       }

@@ -17,7 +17,7 @@ import ConfirmationDialog from './ConfirmationDialog';
 import ColouredSpan from './ColouredSpan';
 import browserStore from '../browserStore';
 import RequestButton from './RequestButton';
-import TutorialTooltip from './TutorialTooltip';
+import TutorialTooltip, { hideTutorialTooltip, isTutorialTooltipHidden } from './TutorialTooltip';
 
 class Gather extends Component {
   constructor(props) {
@@ -29,7 +29,17 @@ class Gather extends Component {
   }
 
   componentDidMount() {
-    this.retrieveData();
+    const token = getToken(this.props);
+
+    withToken(token).hasUploadedRecord().then((didUpload) => {
+      console.log('didupload?', didUpload);
+      if (didUpload) {
+        this.retrieveData();
+      } else {
+        const { history } = this.props;
+        history.push(`/welcome/${token}`);
+      }
+    });
   }
 
   retrieveData() {
@@ -105,6 +115,23 @@ class Gather extends Component {
     }
   }
 
+  makeTooltip() {
+    const { width } = this.props;
+    const { nameHidden } = this.state;
+    const tutorialHidden = isTutorialTooltipHidden();
+    const mobile = width === 'xs';
+
+    return props => (
+      <>
+        {tutorialHidden ? (
+          <Tooltip title={nameHidden ? 'Revelar nome' : 'Ocultar nome'} placement="right" {...props} />
+        ) : (
+          <TutorialTooltip content={`Para revelar o nome do seu colega, ${mobile ? 'toque' : 'clique'} neste botão.`} {...props} />
+        )}
+      </>
+    );
+  }
+
   render() {
     const { width } = this.props;
     const {
@@ -127,6 +154,8 @@ class Gather extends Component {
     const displayName = nameHidden ? anonymousSubject : subject.name;
     const mobile = width === 'xs';
 
+    const AdaptableTooltip = this.makeTooltip();
+
     return (
       <Box flex="grow" width="100%">
         <Grid container justify="center">
@@ -138,11 +167,11 @@ class Gather extends Component {
 
                 <Box padding="2 0">
                   {/* <Tooltip title="Revelar nome" placement="right"> */}
-                  <TutorialTooltip content={`Para revelar o nome do seu colega, ${mobile ? 'toque' : 'clique'} neste botão.`}>
-                    <IconButton onClick={() => this.setState({ nameHidden: !nameHidden })}>
+                  <AdaptableTooltip>
+                    <IconButton onClick={() => { hideTutorialTooltip(); this.setState({ nameHidden: !nameHidden }); }}>
                       <Icon fontSize="large" />
                     </IconButton>
-                  </TutorialTooltip>
+                  </AdaptableTooltip>
                   {/* </Tooltip> */}
                 </Box>
                 <Box>

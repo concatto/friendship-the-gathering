@@ -46,14 +46,26 @@ class Welcome extends Component {
   handleStart() {
     const token = getToken(this.props);
     const { history } = this.props;
-    const { name, phone } = this.state;
+    const { self, name, phone } = this.state;
 
-    this.setState({ busy: true });
-    withToken(token).acceptTerms(name, phone).then(() => {
-      this.setState({ busy: false });
+    function conclude() {
+      console.log(self.recordUrl);
+      if (self.recordUrl !== undefined) {
+        history.push(`/gather/${token}`);
+      } else {
+        history.push(`/record/${token}`);
+      }
+    }
 
-      history.push(`/record/${token}`);
-    });
+    if (!self.acceptedTerms) {
+      this.setState({ busy: true });
+      withToken(token).acceptTerms(name, phone).then(() => {
+        this.setState({ busy: false });
+        conclude();
+      });
+    } else {
+      conclude();
+    }
   }
 
   handleChange(name) {

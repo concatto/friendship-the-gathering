@@ -14,7 +14,8 @@ const toArray = (snapshot) => {
 };
 
 export const gatherResults = (socialGroup) => {
-  // EmQaRX3WT8nRvmfuKs0M
+  // C.C.9: gHPZaZfqVSK9XH7OnNaQ
+  // Betricks: EmQaRX3WT8nRvmfuKs0M
 
   // Transform the subject field of each response to the document's ID
   const populateResponses = responses => (
@@ -31,7 +32,7 @@ export const gatherResults = (socialGroup) => {
     ))
     .then((groupData) => {
       const rows = [
-        ['from', 'to', 'level', 'change'],
+        ['Source', 'Target', 'Level', 'Change'],
       ];
 
       groupData.forEach((member) => {
